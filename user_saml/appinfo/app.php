@@ -23,59 +23,59 @@
 
 
 if (OCP\App::isEnabled('user_saml')) {
-	$ocVersion = implode('.', OCP\Util::getVersion());
-	if (version_compare($ocVersion, '5.0', '<')) {
-		if (!function_exists('p')) {
-			function p($string)
-			{
-				print(OC_Util::sanitizeHTML($string));
-			}
-		}
-	}
+    $ocVersion = implode('.', OCP\Util::getVersion());
+    if (version_compare($ocVersion, '5.0', '<')) {
+        if (!function_exists('p')) {
+            function p($string)
+            {
+                print(OC_Util::sanitizeHTML($string));
+            }
+        }
+    }
 
-	require_once 'user_saml/user_saml.php';
+    require_once 'user_saml/user_saml.php';
 
-	OCP\App::registerAdmin('user_saml', 'settings');
+    OCP\App::registerAdmin('user_saml', 'settings');
 
-	// register user backend
-	OC_User::useBackend('SAML');
+    // register user backend
+    OC_User::useBackend('SAML');
 
-	OC::$CLASSPATH['OC_USER_SAML_Hooks'] = 'user_saml/lib/hooks.php';
-	OCP\Util::connectHook('OC_User', 'post_createUser', 'OC_USER_SAML_Hooks', 'post_createUser');
-	OCP\Util::connectHook('OC_User', 'post_login', 'OC_USER_SAML_Hooks', 'post_login');
-	OCP\Util::connectHook('OC_User', 'logout', 'OC_USER_SAML_Hooks', 'logout');
+    OC::$CLASSPATH['OC_USER_SAML_Hooks'] = 'user_saml/lib/hooks.php';
+    OCP\Util::connectHook('OC_User', 'post_createUser', 'OC_USER_SAML_Hooks', 'post_createUser');
+    OCP\Util::connectHook('OC_User', 'post_login', 'OC_USER_SAML_Hooks', 'post_login');
+    OCP\Util::connectHook('OC_User', 'logout', 'OC_USER_SAML_Hooks', 'logout');
 
-	$forceLogin = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_force_saml_login')
-		&& shouldEnforceAuthentication();
+    $forceLogin = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_force_saml_login')
+        && shouldEnforceAuthentication();
 
-	$disableAdminLogin = \OC::$server->getConfig()->getSystemValue('disable_admin_login');
+    $disableAdminLogin = \OC::$server->getConfig()->getSystemValue('disable_admin_login');
 
-	if ((isset($_GET['app']) && $_GET['app'] == 'user_saml') || (!OCP\User::isLoggedIn() && $forceLogin && (!isset($_GET['admin_login']) || $disableAdminLogin))) {
+    if ((isset($_GET['app']) && $_GET['app'] == 'user_saml') || (!OCP\User::isLoggedIn() && $forceLogin && (!isset($_GET['admin_login']) || $disableAdminLogin))) {
 
-		require_once 'user_saml/auth.php';
+        require_once 'user_saml/auth.php';
 
-		if (!OC_User::login('', '')) {
-			$error = true;
-			OCP\Util::writeLog('saml', 'Error trying to authenticate the user', OCP\Util::DEBUG);
-		}
+        if (!OC_User::login('', '')) {
+            $error = true;
+            OCP\Util::writeLog('saml', 'Error trying to authenticate the user', OCP\Util::DEBUG);
+        }
 
-		if (isset($_GET["linktoapp"])) {
-			$path = OC::$WEBROOT . '/?app=' . $_GET["linktoapp"];
-			if (isset($_GET["linktoargs"])) {
-				$path .= '&' . urldecode($_GET["linktoargs"]);
-			}
-			header('Location: ' . $path);
-			exit();
-		}
+        if (isset($_GET["linktoapp"])) {
+            $path = OC::$WEBROOT . '/?app=' . $_GET["linktoapp"];
+            if (isset($_GET["linktoargs"])) {
+                $path .= '&' . urldecode($_GET["linktoargs"]);
+            }
+            header('Location: ' . $path);
+            exit();
+        }
 
-		OC::$REQUESTEDAPP = '';
-		OC_Util::redirectToDefaultPage();
-	}
+        OC::$REQUESTEDAPP = '';
+        OC_Util::redirectToDefaultPage();
+    }
 
-	if (!OCP\User::isLoggedIn()) {
-		// Load js code in order to render the SAML link and to hide parts of the normal login form
-		OCP\Util::addScript('user_saml', 'utils');
-	}
+    if (!OCP\User::isLoggedIn()) {
+        // Load js code in order to render the SAML link and to hide parts of the normal login form
+        OCP\Util::addScript('user_saml', 'utils');
+    }
 }
 
 
@@ -87,18 +87,18 @@ if (OCP\App::isEnabled('user_saml')) {
  */
 function shouldEnforceAuthentication()
 {
-	if (OC::$CLI) {
-		return false;
-	}
+    if (OC::$CLI) {
+        return false;
+    }
 
-	$script = basename($_SERVER['SCRIPT_FILENAME']);
+    $script = basename($_SERVER['SCRIPT_FILENAME']);
 
-	return !in_array($script,
-		[
-			'cron.php',
-			'public.php',
-			'remote.php',
-			'status.php',
-		]
-	);
+    return !in_array($script,
+        [
+            'cron.php',
+            'public.php',
+            'remote.php',
+            'status.php',
+        ]
+    );
 }
