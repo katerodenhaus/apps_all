@@ -47,8 +47,9 @@ if (OCP\App::isEnabled('user_saml')) {
 	$forceLogin = OCP\Config::getAppValue('user_saml', 'saml_force_saml_login', false)
 		&& shouldEnforceAuthentication();
 
+	$disableAdminLogin = \OC::$server->getConfig()->getSystemValue('disable_admin_login');
 
-	if( (isset($_GET['app']) && $_GET['app'] == 'user_saml') || (!OCP\User::isLoggedIn() && $forceLogin && !isset($_GET['admin_login']) )) {
+	if( (isset($_GET['app']) && $_GET['app'] == 'user_saml') || (!OCP\User::isLoggedIn() && $forceLogin && (!isset($_GET['admin_login']) || $disableAdminLogin) )) {
 
 		require_once 'user_saml/auth.php';
 
@@ -56,7 +57,7 @@ if (OCP\App::isEnabled('user_saml')) {
 			$error = true;
 			OCP\Util::writeLog('saml','Error trying to authenticate the user', OCP\Util::DEBUG);
 		}
-		
+
 		if (isset($_GET["linktoapp"])) {
 			$path = OC::$WEBROOT . '/?app='.$_GET["linktoapp"];
             if (isset($_GET["linktoargs"])) {
