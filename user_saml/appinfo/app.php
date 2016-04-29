@@ -44,7 +44,7 @@ if (OCP\App::isEnabled('user_saml')) {
 	OCP\Util::connectHook('OC_User', 'post_login', 'OC_USER_SAML_Hooks', 'post_login');
 	OCP\Util::connectHook('OC_User', 'logout', 'OC_USER_SAML_Hooks', 'logout');
 
-	$forceLogin = OCP\Config::getAppValue('user_saml', 'saml_force_saml_login', false)
+	$forceLogin = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_force_saml_login')
 		&& shouldEnforceAuthentication();
 
 	$disableAdminLogin = \OC::$server->getConfig()->getSystemValue('disable_admin_login');
