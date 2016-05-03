@@ -46,7 +46,7 @@ if (OCP\App::isEnabled('user_saml')) {
     $forceLogin = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_force_saml_login')
         && shouldEnforceAuthentication();
 
-    $disableAdminLogin = \OC::$server->getConfig()->getSystemValue('disable_admin_login');
+    $disableAdminLogin = \OC::$server->getConfig()->getSystemValue('disable_admin_login', false);
 
     if ((isset($_GET['app']) && $_GET['app'] == 'user_saml') || (!OCP\User::isLoggedIn() && $forceLogin && (!isset($_GET['admin_login']) || $disableAdminLogin))) {
 
