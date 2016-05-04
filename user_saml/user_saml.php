@@ -63,7 +63,7 @@ class OC_USER_SAML extends OC_User_Backend
             if (isset($_COOKIE["user_saml_logged_in"]) AND $_COOKIE["user_saml_logged_in"] AND !$this->auth->isAuthenticated()) {
                 unset($_COOKIE["user_saml_logged_in"]);
                 setcookie("user_saml_logged_in", null, -1);
-                OCP\User::logout();
+                \OC::$server->getUserSession()->logout();
             }
         }
     }
@@ -81,7 +81,7 @@ class OC_USER_SAML extends OC_User_Backend
             if (array_key_exists($usernameMapping, $attributes) && !empty($attributes[$usernameMapping][0])) {
                 $uid = $attributes[$usernameMapping][0];
                 OCP\Util::writeLog('saml', 'Authenticated user ' . $uid, OCP\Util::DEBUG);
-                if (!OCP\User::userExists($uid) && $this->autocreate) {
+                if (!\OC::$server->getUserManager()->userExists($uid) && $this->autocreate) {
                     return $this->createUser($uid);
                 }
 
