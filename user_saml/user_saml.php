@@ -26,22 +26,100 @@ class OC_USER_SAML extends OC_User_Backend
 {
 
     // cached settings
+    /**
+     * Whether or not to force login by SAML
+     *
+     * @var string
+     */
     public $forceLogin;
+    /**
+     * Whether or not to auto-create an Owncloud user
+     *
+     * @var string
+     */
     public $autocreate;
+    /**
+     * Whether or not to update user data upon login
+     *
+     * @var string
+     */
     public $updateUserData;
+    /**
+     * Whether or not groups are protected
+     *
+     * @var array
+     */
     public $protectedGroups;
+    /**
+     * The default group to give a SAML user
+     *
+     * @var string
+     */
     public $defaultGroup;
+    /**
+     * The field that maps to the username
+     *
+     * @var array
+     */
     public $usernameMapping;
+    /**
+     * The field that maps to the email address
+     *
+     * @var array
+     */
     public $mailMapping;
+    /**
+     * The field that maps to the display name
+     *
+     * @var array
+     */
     public $displayNameMapping;
+    /**
+     * The field that maps to your total quota
+     *
+     * @var array
+     */
     public $quotaMapping;
+    /**
+     * Default quota for new users
+     *
+     * @var string
+     */
     public $defaultQuota;
+    /**
+     * The field that determines what group the user is in
+     *
+     * @var array
+     */
     public $groupMapping;
+    /**
+     * Auth object
+     *
+     * @var SimpleSAML_Auth_Simple
+     */
     public $auth;
+    /**
+     * Path to SimpleSAML
+     *
+     * @var string
+     */
     protected $sspPath;
+    /**
+     * Service provider source
+     *
+     * @var string
+     */
     protected $spSource;
+    /**
+     * Database connection
+     *
+     * @var
+     */
     protected $db;
 
+    /**
+     * OC_USER_SAML constructor.
+     */
     public function __construct()
     {
         $this->sspPath            = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_ssp_path', '');
@@ -71,6 +149,12 @@ class OC_USER_SAML extends OC_User_Backend
         }
     }
 
+    /**
+     * Determines if a user if a user was created or not
+     *
+     * @return bool
+     * @throws \Exception
+     */
     public function checkPassword()
     {
         if (!$this->auth->isAuthenticated()) {
@@ -99,6 +183,14 @@ class OC_USER_SAML extends OC_User_Backend
         return false;
     }
 
+    /**
+     * Creates the Owncloud user
+     *
+     * @param $uid
+     *
+     * @return bool
+     * @throws Exception
+     */
     private function createUser($uid)
     {
         if (preg_match('/[^a-zA-Z0-9 _\.@\-]/', $uid)) {
@@ -121,6 +213,13 @@ class OC_USER_SAML extends OC_User_Backend
         }
     }
 
+    /**
+     * Saves the password in an AES_ENCRYPT with the configured encrypt_key for retrieval (AES_DECRYPT) later.  Used to
+     * display if a user needs to use 3rd-party plugin but is a SAML user
+     *
+     * @param $uuid
+     * @param $password
+     */
     private function saveEncryptedPassword($uuid, $password)
     {
         $db    = $this->getDb();
@@ -136,6 +235,8 @@ class OC_USER_SAML extends OC_User_Backend
     }
 
     /**
+     * Returns the database connection
+     *
      * @return IDBConnection
      */
     public function getDb()
@@ -148,6 +249,8 @@ class OC_USER_SAML extends OC_User_Backend
     }
 
     /**
+     * Sets the database connection
+     *
      * @param IDBConnection $db
      */
     public function setDb($db)
