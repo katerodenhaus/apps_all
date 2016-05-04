@@ -25,7 +25,6 @@ use OCP\IDBConnection;
 class OC_USER_SAML extends OC_User_Backend
 {
 
-    // cached settings
     /**
      * Whether or not to force login by SAML
      *
@@ -113,7 +112,7 @@ class OC_USER_SAML extends OC_User_Backend
     /**
      * Database connection
      *
-     * @var
+     * @var IDBConnection
      */
     protected $db;
 
@@ -219,6 +218,8 @@ class OC_USER_SAML extends OC_User_Backend
      *
      * @param $uuid
      * @param $password
+     *
+     * @throws \UnexpectedValueException
      */
     private function saveEncryptedPassword($uuid, $password)
     {
