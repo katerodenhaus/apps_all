@@ -41,19 +41,19 @@ class OC_USER_SAML extends OC_User_Backend
 
     public function __construct()
     {
-        $this->sspPath            = OCP\Config::getAppValue('user_saml', 'saml_ssp_path', '');
-        $this->spSource           = OCP\Config::getAppValue('user_saml', 'saml_sp_source', '');
-        $this->forceLogin         = OCP\Config::getAppValue('user_saml', 'saml_force_saml_login', false);
-        $this->autocreate         = OCP\Config::getAppValue('user_saml', 'saml_autocreate', false);
-        $this->updateUserData     = OCP\Config::getAppValue('user_saml', 'saml_update_user_data', false);
-        $this->defaultGroup       = OCP\Config::getAppValue('user_saml', 'saml_default_group', '');
-        $this->protectedGroups    = explode(',', preg_replace('/\s+/', '', OCP\Config::getAppValue('user_saml', 'saml_protected_groups', '')));
-        $this->usernameMapping    = explode(',', preg_replace('/\s+/', '', OCP\Config::getAppValue('user_saml', 'saml_username_mapping', '')));
-        $this->mailMapping        = explode(',', preg_replace('/\s+/', '', OCP\Config::getAppValue('user_saml', 'saml_email_mapping', '')));
-        $this->displayNameMapping = explode(',', preg_replace('/\s+/', '', OCP\Config::getAppValue('user_saml', 'saml_displayname_mapping', '')));
-        $this->quotaMapping       = explode(',', preg_replace('/\s+/', '', OCP\Config::getAppValue('user_saml', 'saml_quota_mapping', '')));
-        $this->defaultQuota       = OCP\Config::getAppValue('user_saml', 'saml_default_quota', '');
-        $this->groupMapping       = explode(',', preg_replace('/\s+/', '', OCP\Config::getAppValue('user_saml', 'saml_group_mapping', '')));
+        $this->sspPath            = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_ssp_path', '');
+        $this->spSource           = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_sp_source', '');
+        $this->forceLogin         = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_force_saml_login', false);
+        $this->autocreate         = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_autocreate', false);
+        $this->updateUserData     = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_update_user_data', false);
+        $this->defaultGroup       = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_default_group', '');
+        $this->protectedGroups    = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_protected_groups', '')));
+        $this->usernameMapping    = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_username_mapping', '')));
+        $this->mailMapping        = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_email_mapping', '')));
+        $this->displayNameMapping = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_displayname_mapping', '')));
+        $this->quotaMapping       = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_quota_mapping', '')));
+        $this->defaultQuota       = \OC::$server->getConfig()->getAppValue('user_saml', 'saml_default_quota', '');
+        $this->groupMapping       = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_group_mapping', '')));
 
         if (!empty($this->sspPath) && !empty($this->spSource)) {
             include_once $this->sspPath . "/lib/_autoload.php";
