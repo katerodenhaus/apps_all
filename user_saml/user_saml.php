@@ -1,4 +1,6 @@
 <?php
+use OC\Encryption\CalCrypt;
+use OCP\IDBConnection;
 
 /**
  * ownCloud - user_saml
@@ -38,6 +40,7 @@ class OC_USER_SAML extends OC_User_Backend
     public $auth;
     protected $sspPath;
     protected $spSource;
+    protected $db;
 
     public function __construct()
     {
@@ -67,7 +70,6 @@ class OC_USER_SAML extends OC_User_Backend
             }
         }
     }
-
 
     public function checkPassword()
     {
@@ -104,11 +106,52 @@ class OC_USER_SAML extends OC_User_Backend
 
             return false;
         } else {
-            $random_password = random_bytes(64);
+            // Do we want to save the unhashed, encrypted password?
+            if (\OC::$server->getConfig()->getAppValue('user_saml', 'save_encrypted_pw', false)) {
+                $random_password = md5(random_bytes(64));
+                $this->saveEncryptedPassword($uid, $random_password);
+            } else {
+                $random_password = random_bytes(64);
+            }
+
             OCP\Util::writeLog('saml', 'Creating new user: ' . $uid, OCP\Util::DEBUG);
             \OC::$server->getUserManager()->createUser($uid, $random_password);
 
             return $uid;
         }
+    }
+
+    private function saveEncryptedPassword($uuid, $password)
+    {
+        $db    = $this->getDb();
+        $query = $db->getQueryBuilder();
+
+        $calcrypt = new CalCrypt($query);
+        $calcrypt->encryptData([
+            'uuid'     => $uuid,
+            'password' => $password
+        ]);
+
+        $query->insert('user_api')->execute();
+    }
+
+    /**
+     * @return IDBConnection
+     */
+    public function getDb()
+    {
+        if (null === $this->db) {
+            $this->setDb(\OC::$server->getDatabaseConnection());
+        }
+
+        return $this->db;
+    }
+
+    /**
+     * @param IDBConnection $db
+     */
+    public function setDb($db)
+    {
+        $this->db = $db;
     }
 }
