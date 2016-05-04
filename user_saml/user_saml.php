@@ -56,20 +56,20 @@ class OC_USER_SAML extends OC_User_Backend
         $this->groupMapping       = explode(',', preg_replace('/\s+/', '', \OC::$server->getConfig()->getAppValue('user_saml', 'saml_group_mapping', '')));
 
         if (!empty($this->sspPath) && !empty($this->spSource)) {
-            include_once $this->sspPath . "/lib/_autoload.php";
+            include_once $this->sspPath . '/lib/_autoload.php';
 
             $this->auth = new SimpleSAML_Auth_Simple($this->spSource);
 
-            if (isset($_COOKIE["user_saml_logged_in"]) AND $_COOKIE["user_saml_logged_in"] AND !$this->auth->isAuthenticated()) {
-                unset($_COOKIE["user_saml_logged_in"]);
-                setcookie("user_saml_logged_in", null, -1);
+            if (isset($_COOKIE['user_saml_logged_in']) AND $_COOKIE['user_saml_logged_in'] AND !$this->auth->isAuthenticated()) {
+                unset($_COOKIE['user_saml_logged_in']);
+                setcookie('user_saml_logged_in', null, -1);
                 \OC::$server->getUserSession()->logout();
             }
         }
     }
 
 
-    public function checkPassword($uid, $password)
+    public function checkPassword()
     {
         if (!$this->auth->isAuthenticated()) {
             return false;
@@ -81,7 +81,7 @@ class OC_USER_SAML extends OC_User_Backend
             if (array_key_exists($usernameMapping, $attributes) && !empty($attributes[$usernameMapping][0])) {
                 $uid = $attributes[$usernameMapping][0];
                 OCP\Util::writeLog('saml', 'Authenticated user ' . $uid, OCP\Util::DEBUG);
-                if (!\OC::$server->getUserManager()->userExists($uid) && $this->autocreate) {
+                if ($this->autocreate && !\OC::$server->getUserManager()->userExists($uid)) {
                     return $this->createUser($uid);
                 }
 
@@ -90,9 +90,9 @@ class OC_USER_SAML extends OC_User_Backend
         }
 
         OCP\Util::writeLog('saml', 'Not found attribute used to get the username at the requested saml attribute assertion', OCP\Util::DEBUG);
-        $secure_cookie = OC_Config::getValue("forcessl", false);
+        $secure_cookie = OC_Config::getValue('forcessl', false);
         $expires       = time() + OC_Config::getValue('remember_login_cookie_lifetime', 60 * 60 * 24 * 15);
-        setcookie("user_saml_logged_in", "1", $expires, '', '', $secure_cookie);
+        setcookie('user_saml_logged_in', '1', $expires, '', '', $secure_cookie);
 
         return false;
     }
