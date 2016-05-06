@@ -103,6 +103,13 @@ function get_user_attributes($uid, $samlBackend) {
 			$result['groups'] = array_merge($result['groups'], $attributes[$groupMapping]);
 		}
 	}
+
+	// Are they an admin user?
+	$admin_users = \OC::$server->getConfig()->getSystemValue('admin_users', false);
+	if (is_array($admin_users) && in_array($uid, $admin_users, true)) {
+		$result['groups'][] = 'admin';
+	}
+
 	if (empty($result['groups']) && !empty($samlBackend->defaultGroup)) {
 		$result['groups'] = array($samlBackend->defaultGroup);
 		OCP\Util::writeLog('saml','Using default group "'.$samlBackend->defaultGroup.'" for the user: '.$uid, OCP\Util::DEBUG);
@@ -124,7 +131,7 @@ function get_user_attributes($uid, $samlBackend) {
 		OCP\Util::writeLog('saml','Using default quota ('.$result['quota'].') for user: '.$uid, OCP\Util::DEBUG);
 	}
 
-	return $result;	
+	return $result;
 }
 
 
@@ -143,7 +150,7 @@ function update_user_data($uid, $attributes=array(), $just_created=false) {
 	if (isset($attributes['quota'])) {
 		update_quota($uid, $attributes['quota']);
 	}
-}	
+}
 
 
 function update_mail($uid, $email) {
