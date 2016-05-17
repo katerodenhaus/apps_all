@@ -86,13 +86,14 @@ function get_user_attributes($uid, $samlBackend) {
 		}
 	}
 
-	$result['display_name'] = '';
+	$temp_name_array = [];
 	foreach ($samlBackend->displayNameMapping as $displayNameMapping) {
-		if (array_key_exists($displayNameMapping, $attributes) && !empty($attributes[$displayNameMapping][0])) {
-			$result['display_name'] = $attributes[$displayNameMapping][0];
-			break;
+		if (array_key_exists($displayNameMapping, $attributes)) {
+			$temp_name_array[] = $attributes[$displayNameMapping][0];
 		}
 	}
+
+	$result['display_name'] = implode(' ', $temp_name_array);
 
 	$result['groups'] = array();
 	foreach ($samlBackend->groupMapping as $groupMapping) {
