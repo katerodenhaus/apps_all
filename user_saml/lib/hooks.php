@@ -68,9 +68,6 @@ class OC_USER_SAML_Hooks {
 		$samlBackend = new OC_USER_SAML();
 		if ($samlBackend->auth->isAuthenticated()) {
 			OCP\Util::writeLog('saml', 'Executing SAML logout', OCP\Util::DEBUG);
-			unset($_COOKIE["SimpleSAMLAuthToken"]);
-			setcookie('SimpleSAMLAuthToken', '', time()-3600, \OC::$WEBROOT);
-			setcookie('SimpleSAMLAuthToken', '', time()-3600, \OC::$WEBROOT . '/');
 			$samlBackend->auth->logout();
 		}
 		return true;
@@ -135,7 +132,7 @@ function get_user_attributes($uid, $samlBackend) {
 }
 
 
-function update_user_data($uid, $attributes=array(), $just_created=false) {
+function update_user_data($uid, array $attributes = array(), $just_created=false) {
 	OC_Util::setupFS($uid);
 	OCP\Util::writeLog('saml','Updating data of the user: '.$uid, OCP\Util::DEBUG);
 	if(isset($attributes['email'])) {
