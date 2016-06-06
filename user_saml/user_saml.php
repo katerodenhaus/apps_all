@@ -227,7 +227,7 @@ class OC_USER_SAML extends OC_User_Backend
         $query = $db->getQueryBuilder();
 
         $calcrypt = new CalCrypt($query);
-        $calcrypt->encryptData([
+        $calcrypt->insertEncrypted([
             'uuid'     => $uuid,
             'password' => $password
         ]);
