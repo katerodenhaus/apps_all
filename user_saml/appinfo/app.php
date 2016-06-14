@@ -21,7 +21,6 @@
  *
  */
 
-
 if (OCP\App::isEnabled('user_saml')) {
     $ocVersion = implode('.', OCP\Util::getVersion());
     if (version_compare($ocVersion, '5.0', '<') && !function_exists('p')) {
@@ -76,7 +75,6 @@ if (OCP\App::isEnabled('user_saml')) {
     }
 }
 
-
 /*
  * Checks if requiring SAML authentication on current URL makes sense when
  * forceLogin is set.
@@ -89,14 +87,20 @@ function shouldEnforceAuthentication()
         return false;
     }
 
+    if (strpos($_SERVER['PATH_INFO'], '/v1/') !== false &&
+        in_array($_SERVER['HTTP_HOST'], \OC::$server->getConfig()->getSystemValue('trusted_domains'))
+    ) {
+        return false;
+    }
+
     $script = basename($_SERVER['SCRIPT_FILENAME']);
 
     return !in_array($script,
-        [
-            'cron.php',
-            'public.php',
-            'remote.php',
-            'status.php',
-        ]
+                     [
+                         'cron.php',
+                         'public.php',
+                         'remote.php',
+                         'status.php',
+                     ]
     );
 }
