@@ -87,7 +87,8 @@ function shouldEnforceAuthentication()
         return false;
     }
 
-    if (strpos($_SERVER['PATH_INFO'], '/v1/') !== false &&
+    if ((strpos($_SERVER['PATH_INFO'], '/v1/') !== false ||
+        strpos($_SERVER['PATH_INFO'], '/avatar/') !== false) &&
         in_array($_SERVER['HTTP_HOST'], \OC::$server->getConfig()->getSystemValue('trusted_domains'))
     ) {
         return false;
