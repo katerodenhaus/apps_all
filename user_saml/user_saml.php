@@ -190,7 +190,7 @@ class OC_USER_SAML extends OC_User_Backend
      * @return bool
      * @throws Exception
      */
-    private function createUser($uid)
+    public function createUser($uid)
     {
         if (preg_match('/[^a-zA-Z0-9 _\.@\-]/', $uid)) {
             OCP\Util::writeLog('saml', 'Invalid username "' . $uid . '", allowed chars "a-zA-Z0-9" and "_.@-" ', OCP\Util::DEBUG);
